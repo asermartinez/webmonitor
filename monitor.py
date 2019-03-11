@@ -1,15 +1,15 @@
 import os
 import smtplib
 import requests
-# import logging
+import logging
 
 EMAIL_ADDRESS = os.environ.get('EMAIL_USER')
 EMAIL_PASSWORD = os.environ.get('EMAIL_PASS')
 EMAIL_TO = os.environ.get('EMAIL_TO')
 
-# logging.basicConfig(filename='PATH_TO_DESIRED_LOG_FILE',
-#                     level=logging.INFO,
-#                     format='%(asctime)s:%(levelname)s:%(message)s')
+logging.basicConfig(filename='messages.log',
+                    level=logging.INFO,
+                    format='%(asctime)s:%(levelname)s:%(message)s')
 
 
 def notify_user():
@@ -22,9 +22,10 @@ def notify_user():
 
         subject = 'YOUR SITE IS DOWN!'
         body = 'Make sure the server restarted and it is back up'
-        msg = f'Subject: {subject}\n\n{body}'
+        msg = 'Subject: {}\n\n{}'.format(subject, body)
+        # msg = f'Subject: {subject}\n\n{body}'
 
-        # logging.info('Sending Email...')
+        logging.info('Sending Email...')
         smtp.sendmail(EMAIL_ADDRESS, EMAIL_TO, msg)
 
 
@@ -40,16 +41,16 @@ def check_site(site):
         r = requests.get(site, timeout=5)
 
         if r.status_code != 200:
-            # logging.info('Website is DOWN!')
-            print("Server {} is Down!".format(site))
+            logging.info('Site is DOWN!')
+            print("Site {} is Down!".format(site))
             print("Email sent!")
             notify_user()
             # reboot_server()
         else:
-            print("Server {} OK".format(site))
-            # logging.info('Website is UP')
+            print("Site {} OK".format(site))
+            logging.info('Site {} is UP'.format(site))
     except Exception as e:
-        # logging.info('Website is DOWN!')
+        logging.info('Test failed, exception: {}'.format(e))
         print("Exception: {}".format(e))
         # notify_user()
         # reboot_server()
